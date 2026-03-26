@@ -1,0 +1,20 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+.pytest_cache/
+
+# --- Database ---
+instance/*.db
+*.sqlite3
+
+# --- Environment / OS ---
+.env
+.DS_Store
+Thumbs.db
+
+# --- Docker ---
+# ログファイルなどは除外
+*.log

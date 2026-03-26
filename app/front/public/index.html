@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>読書ログアプリ</title>
+    <link rel="stylesheet" href="/src/css/style.css">
+</head>
+<body>
+    <h1>📚 私の読書ログ</h1>
+    
+    <div id="user-info">
+        <p>ユーザーID: <span id="user-id">1</span></p>
+        <button onclick="fetchBooks()">本の一覧を更新</button>
+    </div>
+
+    <div id="add-book-form" style="border: 1px solid #2ecc71; padding: 15px; margin: 10px; border-radius: 8px; background: #eafff2;">
+        <h3>📚 新しい本を登録</h3>
+            タイトル: <input type="text" id="book-title" placeholder="吾輩は猫である">
+            総ページ数: <input type="number" id="book-pages" placeholder="300">
+            目標完了日: <input type="date" id="book-target">
+        <button onclick="submitNewBook()" style="background-color: #2ecc71;">本を追加する</button>
+    </div>
+
+    <div id="book-list">
+        </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/src/js/api.js"></script>
+    <script src="/src/js/main.js"></script>
+</body>
+</html>
