@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book-meter - わたしの本棚</title>
+    <style>
+        /* === 全体の基本設定 === */
+        :root {
+            --primary-color: #4a90e2;
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --text-main: #333333;
+            --text-sub: #777777;
+        }
+        body { font-family: 'Helvetica Neue', Arial, sans-serif; background-color: var(--bg-color); color: var(--text-main); margin: 0; padding: 0; }
+        a { text-decoration: none; color: var(--primary-color); }
+        a:hover { text-decoration: underline; }
+
+        /* === ヘッダー === */
+        header { background-color: var(--card-bg); padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        header h1 { margin: 0; font-size: 1.5rem; color: var(--primary-color); }
+        .user-controls { display: flex; align-items: center; gap: 15px; font-size: 0.9rem; }
+        .rank-badge { background-color: #ffd700; color: #b8860b; padding: 4px 10px; border-radius: 12px; font-weight: bold; font-size: 0.85rem; }
+        .header-btn { padding: 6px 12px; border: 1px solid #ddd; background: #fff; border-radius: 4px; cursor: pointer; transition: 0.2s; }
+        .header-btn:hover { background: #f0f0f0; }
+
+        /* === メインコンテンツ === */
+        main { max-width: 900px; margin: 20px auto 40px; padding: 0 20px; }
+
+        /* 🔍 検索＆フィルターエリア */
+        .controls-container {
+            background-color: var(--card-bg);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+        
+        .search-box {
+            width: 100%;
+            padding: 12px 15px;
+            font-size: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-sizing: border-box;
+            margin-bottom: 15px;
+            outline: none;
+            transition: 0.2s;
+        }
+        .search-box:focus { border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2); }
+
+        .filter-chips {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .chip {
+            background-color: #eee;
+            color: var(--text-main);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .chip:hover { background-color: #ddd; }
+        .chip.active { background-color: var(--primary-color); color: white; }
+
+        /* 📚 本のリスト */
+        .book-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+        @media (max-width: 768px) { .book-list { grid-template-columns: 1fr; } }
+
+        .book-card { background-color: var(--card-bg); border-radius: 8px; padding: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); display: flex; gap: 15px; transition: opacity 0.3s ease; }
+        .book-cover { width: 70px; height: 100px; background-color: #eee; object-fit: cover; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .book-info { flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
+        .book-title { font-size: 1.1rem; font-weight: bold; margin: 0 0 5px 0; }
+        .book-meta { font-size: 0.85rem; color: var(--text-sub); margin: 0 0 10px 0; }
+
+        /* バッジとプログレスバー */
+        .status-badge { font-size: 0.75rem; font-weight: bold; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-bottom: 5px; width: fit-content; }
+        .status-reading { background-color: #e6f2ff; color: #4a90e2; }
+        .status-unread { background-color: #fff4e6; color: #e67e22; }
+        .status-finished { background-color: #eafaf1; color: #27ae60; }
+
+        .progress-container { background-color: #eee; border-radius: 4px; height: 8px; overflow: hidden; margin-bottom: 5px; }
+        .progress-bar { background-color: var(--primary-color); height: 100%; border-radius: 4px; }
+        .progress-bar.zero { background-color: transparent; }
+        .progress-text { font-size: 0.85rem; font-weight: bold; color: var(--primary-color); text-align: right; }
+        .progress-text.zero { color: var(--text-sub); }
+
+        /* JavaScriptで非表示にするためのクラス */
+        .hidden { display: none !important; }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">
+            <a href="index.html" style="text-decoration: none;">
+                <h1>📚 Book-meter</h1>
+            </a>
+        </div>
+        <div class="user-controls">
+            <span class="rank-badge">🏆 シルバーリーダー</span>
+            <span>ID: test_user</span>
+            
+            <a href="mypage.html" class="header-btn" style="text-decoration: none; color: inherit; display: inline-block;">👤 マイページ</a>
+            
+            <button class="header-btn" onclick="logout()">ログアウト</button>
+        </div>
+    </header>
+
+    <main>
+        <a href="index.html" class="back-link">◀ ホームに戻る</a>
+
+        <div class="controls-container">
+            <input type="text" id="searchInput" class="search-box" placeholder="タイトルや著者名で本棚を検索...">
+            <div class="filter-chips">
+                <button class="chip active" data-filter="all">すべて表示</button>
+                <button class="chip" data-filter="reading">📖 読書中</button>
+                <button class="chip" data-filter="unread">📚 未読</button>
+                <button class="chip" data-filter="finished">✔️ 読了</button>
+            </div>
+        </div>
+
+        <div class="book-list" id="bookList">
+            
+            <div class="book-card" data-status="reading" data-title="Pythonチュートリアル 第4版" data-author="Guido van Rossum">
+                <img src="https://ndlsearch.ndl.go.jp/thumbnail/9784873119700.jpg" alt="書影" class="book-cover">
+                <div class="book-info">
+                    <div>
+                        <div class="status-badge status-reading">読書中</div>
+                        <h3 class="book-title"><a href="book-detail.html?id=1">Pythonチュートリアル 第4版</a></h3>
+                        <div class="book-meta">Guido van Rossum</div>
+                    </div>
+                    <div>
+                        <div class="progress-container"><div class="progress-bar" style="width: 45%;"></div></div>
+                        <div class="progress-text">117 / 260 P (45%)</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="book-card" data-status="unread" data-title="独学プログラマー" data-author="Cory Althoff">
+                <img src="https://ndlsearch.ndl.go.jp/thumbnail/9784296111858.jpg" alt="書影" class="book-cover">
+                <div class="book-info">
+                    <div>
+                        <div class="status-badge status-unread">未読</div>
+                        <h3 class="book-title"><a href="book-detail.html?id=2">独学プログラマー</a></h3>
+                        <div class="book-meta">Cory Althoff</div>
+                    </div>
+                    <div>
+                        <div class="progress-container"><div class="progress-bar zero" style="width: 0%;"></div></div>
+                        <div class="progress-text zero">0 / 344 P (0%)</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="book-card" data-status="unread" data-title="退屈なことはPythonにやらせよう" data-author="Al Sweigart">
+                <img src="https://ndlsearch.ndl.go.jp/thumbnail/9784797389463.jpg" alt="書影" class="book-cover">
+                <div class="book-info">
+                    <div>
+                        <div class="status-badge status-unread">未読</div>
+                        <h3 class="book-title"><a href="book-detail.html?id=3">退屈なことはPythonにやらせよう</a></h3>
+                        <div class="book-meta">Al Sweigart</div>
+                    </div>
+                    <div>
+                        <div class="progress-container"><div class="progress-bar zero" style="width: 0%;"></div></div>
+                        <div class="progress-text zero">0 / 624 P (0%)</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="book-card" data-status="finished" data-title="ドメイン駆動設計入門" data-author="成瀬 允宣">
+                <img src="https://ndlsearch.ndl.go.jp/thumbnail/9784798150727.jpg" alt="書影" class="book-cover">
+                <div class="book-info">
+                    <div>
+                        <div class="status-badge status-finished">読了</div>
+                        <h3 class="book-title"><a href="book-detail.html?id=4">ドメイン駆動設計入門</a></h3>
+                        <div class="book-meta">成瀬 允宣</div>
+                    </div>
+                    <div>
+                        <div class="progress-container"><div class="progress-bar" style="width: 100%; background-color: #27ae60;"></div></div>
+                        <div class="progress-text" style="color: #27ae60;">320 / 320 P 完了</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const searchInput = document.getElementById('searchInput');
+            const filterChips = document.querySelectorAll('.chip');
+            const bookCards = document.querySelectorAll('.book-card');
+            
+            let currentFilter = 'all';
+
+            // 本の表示/非表示を判定する関数
+            function filterBooks() {
+                const searchTerm = searchInput.value.toLowerCase();
+
+                bookCards.forEach(card => {
+                    // カスタムデータ属性(data-*)から情報を取得
+                    const title = card.getAttribute('data-title').toLowerCase();
+                    const author = card.getAttribute('data-author').toLowerCase();
+                    const status = card.getAttribute('data-status');
+
+                    // 検索条件に一致するか
+                    const matchesSearch = title.includes(searchTerm) || author.includes(searchTerm);
+                    // フィルター条件に一致するか
+                    const matchesFilter = (currentFilter === 'all') || (status === currentFilter);
+
+                    // 両方満たせば表示、そうでなければ隠す
+                    if (matchesSearch && matchesFilter) {
+                        card.classList.remove('hidden');
+                    } else {
+                        card.classList.add('hidden');
+                    }
+                });
+            }
+
+            // 検索ボックスへの入力イベント
+            searchInput.addEventListener('input', filterBooks);
+
+            // チップ（ボタン）のクリックイベント
+            filterChips.forEach(chip => {
+                chip.addEventListener('click', (e) => {
+                    // 見た目のアクティブ状態を切り替え
+                    filterChips.forEach(c => c.classList.remove('active'));
+                    e.target.classList.add('active');
+                    
+                    // 現在のフィルター条件を更新して再評価
+                    currentFilter = e.target.getAttribute('data-filter');
+                    filterBooks();
+                });
+            });
+        });
+    </script>
+</body>
+</html>
