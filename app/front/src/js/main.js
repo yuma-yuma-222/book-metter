@@ -18,11 +18,11 @@ async function checkAuthAndLoad() {
         if (el) el.innerText = currentUser.username;
 
         // ページ別初期化
-        if (document.getElementById('group-list'))   await loadMyGroups();
+        if (document.getElementById('group-list')) await loadMyGroups();
         if (document.getElementById('search-results') &&
-            document.getElementById('search-input'))  initSearchBookPage();
+            document.getElementById('search-input')) initSearchBookPage();
         if (document.getElementById('bookshelf-list')) await loadBookshelf();
-        if (document.getElementById('group-search-results')) {} 
+        if (document.getElementById('group-search-results')) { }
         if (document.getElementById('group-detail-main')) await loadGroupDetail();
         if (document.getElementById('group-setting-main')) await loadGroupSetting();
 
@@ -127,7 +127,7 @@ function renderGroupCard(group) {
     const percent = totalPages > 0 ? Math.min(100, Math.round((totalRead / totalPages) * 100)) : 0;
 
     const segments = myProgresses.map(p => {
-        const left  = totalPages > 0 ? ((p.start_page - 1) / totalPages) * 100 : 0;
+        const left = totalPages > 0 ? ((p.start_page - 1) / totalPages) * 100 : 0;
         const width = totalPages > 0 ? ((p.end_page - p.start_page + 1) / totalPages) * 100 : 0;
         return `<div class="range-segment" style="left:${left}%; width:${width}%;"></div>`;
     }).join('');
@@ -135,8 +135,8 @@ function renderGroupCard(group) {
     const bookInfo = group.title
         ? `<div style="display:flex; gap:10px; align-items:flex-start; margin-bottom:12px;">
             ${group.small_cover_url
-                ? `<img src="${group.small_cover_url}" alt="書影" style="width:45px; height:63px; object-fit:cover; border-radius:3px; flex-shrink:0;">`
-                : `<div style="width:45px; height:63px; background:#eee; border-radius:3px; flex-shrink:0;"></div>`}
+            ? `<img src="${group.small_cover_url}" alt="書影" style="width:45px; height:63px; object-fit:cover; border-radius:3px; flex-shrink:0;">`
+            : `<div style="width:45px; height:63px; background:#eee; border-radius:3px; flex-shrink:0;"></div>`}
             <div>
                 <div style="font-weight:bold; font-size:0.95rem;">${escapeHtml(group.title)}</div>
                 ${group.author ? `<div style="font-size:0.8rem; color:#999; margin-top:3px;">${escapeHtml(group.author)}</div>` : ''}
@@ -179,16 +179,16 @@ function renderGroupCard(group) {
 
 async function submitProgress(groupId, totalPages) {
     const startInput = document.getElementById(`start-${groupId}`).value;
-    const endInput   = document.getElementById(`end-${groupId}`).value;
-    const memo       = document.getElementById(`memo-${groupId}`).value;
-    const startPage  = Number(startInput);
-    const endPage    = Number(endInput);
+    const endInput = document.getElementById(`end-${groupId}`).value;
+    const memo = document.getElementById(`memo-${groupId}`).value;
+    const startPage = Number(startInput);
+    const endPage = Number(endInput);
 
-    if (!startInput || !endInput)                          { alert("開始・終了ページを入力してください"); return; }
+    if (!startInput || !endInput) { alert("開始・終了ページを入力してください"); return; }
     if (!Number.isInteger(startPage) || !Number.isInteger(endPage)) { alert("ページ数は整数で入力してください"); return; }
-    if (startPage < 1 || endPage < 1)                     { alert("1以上のページ数を入力してください"); return; }
-    if (startPage > endPage)                               { alert("開始ページは終了ページ以下にしてください"); return; }
-    if (totalPages > 0 && endPage > totalPages)            { alert(`この本は最大 ${totalPages} ページです`); return; }
+    if (startPage < 1 || endPage < 1) { alert("1以上のページ数を入力してください"); return; }
+    if (startPage > endPage) { alert("開始ページは終了ページ以下にしてください"); return; }
+    if (totalPages > 0 && endPage > totalPages) { alert(`この本は最大 ${totalPages} ページです`); return; }
 
     try {
         await postGroupProgress(groupId, { start_page: startPage, end_page: endPage, memo });
@@ -220,7 +220,7 @@ async function runBookSearch() {
     const q = document.getElementById('search-input').value.trim();
     if (!q) { alert("検索キーワードを入力してください"); return; }
 
-    
+
     const type = document.getElementById('search-type').value;
     const container = document.getElementById('search-results');
     container.innerHTML = `<p style="text-align:center; color:#999; padding:30px;">検索中...</p>`;
@@ -255,7 +255,7 @@ function renderBookResult(book) {
                 <div>
                     <h3 class="book-title" style="white-space:normal; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;">${escapeHtml(book.title || '(タイトル不明)')}</h3>
                     <div class="book-meta">
-                        ${book.author    ? `<span class="book-author">${escapeHtml(book.author)}</span>` : ''}
+                        ${book.author ? `<span class="book-author">${escapeHtml(book.author)}</span>` : ''}
                         ${book.publisher ? `<span class="book-publisher">${escapeHtml(book.publisher)}</span>` : ''}
                     </div>
                     ${book.description ? `<p style="font-size:0.85rem; color:#666; margin:8px 0 0;
@@ -271,30 +271,30 @@ function renderBookResult(book) {
 
 function openCreateModal(book) {
     if (!book) {
-        document.getElementById('modal-book-title').innerText  = '';
+        document.getElementById('modal-book-title').innerText = '';
         document.getElementById('modal-book-author').innerText = '';
         const coverEl = document.getElementById('modal-book-cover');
         coverEl.src = '';
         coverEl.style.display = 'none';
         document.getElementById('modal-book-info').style.display = 'none';
         document.getElementById('modal-book-info-inputs').style.display = 'block';
-    document.getElementById('modal-group-name').value  = '';
-    }else {
+        document.getElementById('modal-group-name').value = '';
+    } else {
         selectedBook = book;
-        document.getElementById('modal-book-title').innerText  = book.title || '(タイトル不明)';
+        document.getElementById('modal-book-title').innerText = book.title || '(タイトル不明)';
         document.getElementById('modal-book-author').innerText = book.author || '';
         const coverEl = document.getElementById('modal-book-cover');
         coverEl.src = book.small_cover_url || '';
         coverEl.style.display = book.small_cover_url ? 'block' : 'none';
         document.getElementById('modal-book-info').style.display = 'flex';
         document.getElementById('modal-book-info-inputs').style.display = 'none';
-    document.getElementById('modal-group-name').value  = book.title ? `${book.title}読書会` : '';
+        document.getElementById('modal-group-name').value = book.title ? `${book.title}読書会` : '';
     }
     document.getElementById('modal-total-pages').value = '';
-    document.getElementById('modal-is-lock').checked   = false;
-    document.getElementById('modal-password').value    = '';
+    document.getElementById('modal-is-lock').checked = false;
+    document.getElementById('modal-password').value = '';
     document.getElementById('password-field').style.display = 'none';
-    document.getElementById('create-modal').style.display   = 'flex';
+    document.getElementById('create-modal').style.display = 'flex';
 }
 
 
@@ -318,30 +318,30 @@ async function submitCreateGroup() {
     if (!title) { alert("タイトルを入力してください"); return; }
 
     const totalPages = parseInt(document.getElementById('modal-total-pages').value);
-    const groupName  = document.getElementById('modal-group-name').value.trim();
-    const isLock     = document.getElementById('modal-is-lock').checked;
-    const password   = document.getElementById('modal-password').value;
+    const groupName = document.getElementById('modal-group-name').value.trim();
+    const isLock = document.getElementById('modal-is-lock').checked;
+    const password = document.getElementById('modal-password').value;
 
     if (!totalPages || totalPages < 1) { alert("総ページ数を入力してください"); return; }
-    if (!groupName)                    { alert("グループ名を入力してください"); return; }
-    if (isLock && !password)           { alert("パスワードを入力してください"); return; }
+    if (!groupName) { alert("グループ名を入力してください"); return; }
+    if (isLock && !password) { alert("パスワードを入力してください"); return; }
 
     const data = {
-        name:          groupName,
-        owner:         currentUser.id,
-        is_lock:       isLock,
-        password:      password || "none",
-        title:         title || null,
-        total_pages:   totalPages,
-        author:        author || null,
+        name: groupName,
+        owner: currentUser.id,
+        is_lock: isLock,
+        password: password || "none",
+        title: title || null,
+        total_pages: totalPages,
+        author: author || null,
         publisher: selectedBook?.publisher ?? null,
-        published_date:selectedBook?.published_date  ?? null,
-        description:   selectedBook?.description   ?? null,
-        self_link:     selectedBook?.self_link     ?? null,
-        api_id:        selectedBook?.api_id        ?? null,
-        api_etag:      selectedBook?.api_etag      ?? null,
-        small_cover_url:selectedBook?.small_cover_url ?? null,
-        cover_url:     selectedBook?.cover_url     ?? null,
+        published_date: selectedBook?.published_date ?? null,
+        description: selectedBook?.description ?? null,
+        self_link: selectedBook?.self_link ?? null,
+        api_id: selectedBook?.api_id ?? null,
+        api_etag: selectedBook?.api_etag ?? null,
+        small_cover_url: selectedBook?.small_cover_url ?? null,
+        cover_url: selectedBook?.cover_url ?? null,
     };
 
     try {
@@ -466,8 +466,8 @@ function renderGroupSearchCard(group, myGroupIds) {
     const bookInfo = group.title
         ? `<div style="display:flex; gap:10px; align-items:flex-start; margin-bottom:12px;">
             ${group.small_cover_url
-                ? `<img src="${group.small_cover_url}" alt="書影" style="width:45px; height:63px; object-fit:cover; border-radius:3px; flex-shrink:0;">`
-                : `<div style="width:45px; height:63px; background:#eee; border-radius:3px; flex-shrink:0;"></div>`}
+            ? `<img src="${group.small_cover_url}" alt="書影" style="width:45px; height:63px; object-fit:cover; border-radius:3px; flex-shrink:0;">`
+            : `<div style="width:45px; height:63px; background:#eee; border-radius:3px; flex-shrink:0;"></div>`}
             <div>
                 <div style="font-weight:bold; font-size:0.95rem;">${escapeHtml(group.title)}</div>
                 ${group.author ? `<div style="font-size:0.8rem; color:#999; margin-top:3px;">${escapeHtml(group.author)}</div>` : ''}
@@ -590,9 +590,9 @@ function renderGroupDetail(group, progresses) {
 
     // 全メンバーの進捗バー
     const allSegments = progresses.map(p => {
-        const left  = totalPages > 0 ? ((p.start_page - 1) / totalPages) * 100 : 0;
+        const left = totalPages > 0 ? ((p.start_page - 1) / totalPages) * 100 : 0;
         const width = totalPages > 0 ? ((p.end_page - p.start_page + 1) / totalPages) * 100 : 0;
-        const isMe  = p.user_id === currentUser.id;
+        const isMe = p.user_id === currentUser.id;
         return `<div class="range-segment" style="left:${left}%; width:${width}%; background:${isMe ? 'var(--primary-color)' : 'rgba(74,144,226,0.3)'};"></div>`;
     }).join('');
 
@@ -644,8 +644,8 @@ function renderGroupDetail(group, progresses) {
                 <h2 style="margin:0; font-size:1.4rem;">${escapeHtml(group.name)}</h2>
                 <div style="display:flex; gap:8px; align-items:center;">
                     ${group.is_lock
-                        ? `<span style="font-size:0.8rem; background:#fff3cd; color:#856404; padding:3px 8px; border-radius:10px; border:1px solid #ffc107;">🔒 鍵あり</span>`
-                        : `<span style="font-size:0.8rem; background:#d4edda; color:#155724; padding:3px 8px; border-radius:10px; border:1px solid #28a745;">🔓 公開</span>`}
+            ? `<span style="font-size:0.8rem; background:#fff3cd; color:#856404; padding:3px 8px; border-radius:10px; border:1px solid #ffc107;">🔒 鍵あり</span>`
+            : `<span style="font-size:0.8rem; background:#d4edda; color:#155724; padding:3px 8px; border-radius:10px; border:1px solid #28a745;">🔓 公開</span>`}
                     <a href="/public/group-setting.html?id=${group.id}"
                         style="font-size:0.8rem; padding:4px 10px; border:1px solid #ccc; border-radius:4px; color:#333;">⚙️ 設定</a>
                 </div>
@@ -655,8 +655,8 @@ function renderGroupDetail(group, progresses) {
             ${group.title ? `
             <div style="display:flex; gap:15px; align-items:flex-start; background:#f4f7f6; border-radius:8px; padding:15px; margin-bottom:15px;">
                 ${group.cover_url
-                    ? `<img src="${group.cover_url}" alt="書影" style="width:70px; height:98px; object-fit:cover; border-radius:4px; flex-shrink:0;">`
-                    : `<div style="width:70px; height:98px; background:#eee; border-radius:4px; flex-shrink:0;"></div>`}
+                ? `<img src="${group.cover_url}" alt="書影" style="width:70px; height:98px; object-fit:cover; border-radius:4px; flex-shrink:0;">`
+                : `<div style="width:70px; height:98px; background:#eee; border-radius:4px; flex-shrink:0;"></div>`}
                 <div>
                     <div style="font-weight:bold; font-size:1.1rem; margin-bottom:5px;">${escapeHtml(group.title)}</div>
                     ${group.author ? `<div style="font-size:0.85rem; color:#777;">👤 ${escapeHtml(group.author)}</div>` : ''}
@@ -706,14 +706,14 @@ function renderGroupDetail(group, progresses) {
 
 async function submitDetailProgress(groupId, totalPages) {
     const startInput = document.getElementById('detail-start').value;
-    const endInput   = document.getElementById('detail-end').value;
-    const memo       = document.getElementById('detail-memo').value;
-    const startPage  = Number(startInput);
-    const endPage    = Number(endInput);
+    const endInput = document.getElementById('detail-end').value;
+    const memo = document.getElementById('detail-memo').value;
+    const startPage = Number(startInput);
+    const endPage = Number(endInput);
 
-    if (!startInput || !endInput)           { alert("開始・終了ページを入力してください"); return; }
-    if (startPage < 1 || endPage < 1)       { alert("1以上のページ数を入力してください"); return; }
-    if (startPage > endPage)                { alert("開始ページは終了ページ以下にしてください"); return; }
+    if (!startInput || !endInput) { alert("開始・終了ページを入力してください"); return; }
+    if (startPage < 1 || endPage < 1) { alert("1以上のページ数を入力してください"); return; }
+    if (startPage > endPage) { alert("開始ページは終了ページ以下にしてください"); return; }
     if (totalPages > 0 && endPage > totalPages) { alert(`この本は最大 ${totalPages} ページです`); return; }
 
     try {
@@ -728,8 +728,8 @@ async function submitDetailProgress(groupId, totalPages) {
 function openEditProgressModal(progressId, startPage, endPage, memo) {
     editingProgressId = progressId;
     document.getElementById('edit-start-page').value = startPage;
-    document.getElementById('edit-end-page').value   = endPage;
-    document.getElementById('edit-memo').value       = memo;
+    document.getElementById('edit-end-page').value = endPage;
+    document.getElementById('edit-memo').value = memo;
     document.getElementById('edit-progress-modal').style.display = 'flex';
 }
 
@@ -741,11 +741,11 @@ function closeEditProgressModal() {
 async function submitEditProgress() {
     if (!editingProgressId || !currentGroup) return;
     const startPage = Number(document.getElementById('edit-start-page').value);
-    const endPage   = Number(document.getElementById('edit-end-page').value);
-    const memo      = document.getElementById('edit-memo').value;
+    const endPage = Number(document.getElementById('edit-end-page').value);
+    const memo = document.getElementById('edit-memo').value;
 
-    if (startPage < 1 || endPage < 1)  { alert("1以上のページ数を入力してください"); return; }
-    if (startPage > endPage)            { alert("開始ページは終了ページ以下にしてください"); return; }
+    if (startPage < 1 || endPage < 1) { alert("1以上のページ数を入力してください"); return; }
+    if (startPage > endPage) { alert("開始ページは終了ページ以下にしてください"); return; }
 
     try {
         await patchUpdateProgress(currentGroup.id, editingProgressId, { start_page: startPage, end_page: endPage, memo });
@@ -855,6 +855,14 @@ function renderGroupSetting(group) {
             </button>
         </div>
 
+        <div style="background:var(--card-bg); border-radius:8px; padding:20px; box-shadow:0 2px 4px rgba(0,0,0,0.05); margin-bottom:20px;">
+            <h3 style="margin:0 0 15px; font-size:1rem;">おすすめ設定</h3>
+            <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+                <input type="checkbox" id="setting-is-recommend">
+                <span>この本をおすすめに追加する</span>
+            </label>
+        </div>
+
         <!-- グループ削除 -->
         <div style="background:#fff8f8; border:1px solid #f5c6cb; border-radius:8px; padding:20px; margin-top:30px;">
             <h3 style="margin:0 0 10px; font-size:1rem; color:#721c24;">⚠️ 危険な操作</h3>
@@ -887,7 +895,7 @@ async function handleUpdateGroupName(groupId) {
 }
 
 async function handleUpdateGroupLock(groupId) {
-    const isLock   = document.getElementById('setting-is-lock').checked;
+    const isLock = document.getElementById('setting-is-lock').checked;
     const password = document.getElementById('setting-password').value;
     if (isLock && !password) { alert("パスワードを入力してください"); return; }
     const data = { is_lock: isLock };
